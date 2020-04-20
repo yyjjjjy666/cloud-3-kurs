@@ -12,7 +12,7 @@
         update_cache: yes
         state: latest
     with_items: "{{ package_pip }}"
-    
+
   - name: Start apach2 service
     service:
       name: apache2
@@ -35,3 +35,45 @@
     mysql_db:
       name: "{{ dbname }}"
       state: present
+
+  - name: Create user with pass for DB
+    mysql_user:
+      name: "{{ dbuser }}"
+      password: "{{ dbpassword }}"
+      priv: "*.*:ALL"
+      state: present
+
+  - name: Install dpkg module
+    apt:
+      name: "{{ item }}"
+      update_cache: yes
+      state: latest
+    with_items: "{{ package_dpkg }}"
+
+  - name: Download Zabbix repo
+    get_url:
+      url: "{{ zabbix_repo }}"
+      dest: "{{ zabbix_repodestination }}"
+      mode: "0777"
+
+  - name: Dpkg downloaded file
+    dpkg_selections:
+      name: "{{ zabbixrepofile }}"
+      selection: hold
+
+  - name: Install zabbix
+    apt:
+        name: "{{ item }}" 
+        update_cache: yes
+        state: latest
+    with_items: "{{ package_zabbix }}"
+
+  - name: Configuring zabbix server
+    lineinfile: 
+      path: "{{ zabbixconffile }}"
+      line: "{{ zdbname }}\n{{ zdbuser }}\n{{ zdbpassword }}\n{{ zdbhost }}"
+  
+  - name: Restart apache2 service
+    service: 
+      name: apache2
+      state: restarted
