@@ -1,0 +1,7 @@
+---
+  - name: Install APM
+    apt:
+        name: "{{ item }}" 
+        update_cache: yes
+        state: latest
+    with_items: "{{ packages }}"

@@ -1,0 +1,6 @@
+---
+    packages:
+        - apache2
+        - libapache2-mod-php
+        - mysql-server
+        - mysql-client
