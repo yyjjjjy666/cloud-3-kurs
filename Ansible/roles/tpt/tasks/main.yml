@@ -1,7 +1,37 @@
 ---
-  - name: Install APM
+  - name: Install AMP
     apt:
         name: "{{ item }}" 
         update_cache: yes
         state: latest
     with_items: "{{ packages }}"
+
+  - name: Install pip module
+    apt:
+        name: "{{ item }}"
+        update_cache: yes
+        state: latest
+    with_items: "{{ package_pip }}"
+    
+  - name: Start apach2 service
+    service:
+      name: apache2
+      state: started
+      enabled: yes
+
+  - name: Start mysql service
+    service: 
+      name: mysql
+      state: started
+      enabled: yes
+
+  - name: Install MySQL-python module
+    pip:
+      name: "{{ item }}"
+      state: latest
+    with_items: "{{ package_mspm }}"  
+
+  - name: Create DB 
+    mysql_db:
+      name: "{{ dbname }}"
+      state: present

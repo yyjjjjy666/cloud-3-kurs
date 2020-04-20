@@ -1,6 +1,33 @@
 ---
     packages:
-        - apache2
-        - libapache2-mod-php
+        - apache2 
+        - php 
+        - php-pear 
+        - php-cgi 
+        - php-common 
+        - libapache2-mod-php 
+        - php-mbstring 
+        - php-net-socket 
+        - php-gd 
+        - php-xml-util 
+        - php-mysql 
+        - php-gettext 
+        - php-bcmath
         - mysql-server
         - mysql-client
+    
+    package_pip:
+        - python-pip
+        - python-dev 
+        - libmysqlclient-dev
+
+    package_mspm:
+        - MySQL-python
+
+    servies:
+        - apache2
+        - mysql
+        - zabbix-server
+
+    dbname: 
+        - DBName = zabbix
