@@ -1,0 +1,65 @@
+---
+    packages:
+        - apache2 
+        - php 
+        - php-pear 
+        - php-cgi 
+        - php-common 
+        - libapache2-mod-php 
+        - php-mbstring 
+        - php-net-socket 
+        - php-gd 
+        - php-xml-util 
+        - php-mysql 
+        - php-gettext 
+        - php-bcmath
+        - mysql-server
+        - mysql-client
+    
+    package_pip:
+        - python-pip
+        - python-dev 
+        - libmysqlclient-dev
+
+    package_mspm:
+        - MySQL-python
+
+    services:
+        - apache2
+        - mysql
+        - zabbix-server
+
+    dbname: 
+        - DBName=zabbix
+    
+    dbuser:
+        - DBUser=zabbix
+
+    dbpassword:
+        - DBPassword=zabbix
+    
+    package_dpkg:
+        - dpkg
+
+    zabbix_repo: "http://repo.zabbix.com/zabbix/3.4/ubuntu/pool/main/z/zabbix-release/zabbix-release_3.4-1+bionic_all.deb"
+
+    zabbix_repodestination: "/mnt/a/Desktop/Uroki"
+
+    dbhost:
+        - DBHost=localhost
+
+    zabbixrepofile: "zabbix-release_3.4-1+bionic_all.deb"
+
+    package_zabbix:
+        - zabbix-server-mysql 
+        - zabbix-frontend-php
+
+    zabbixconffile: "/etc/zabbix/zabbix_server.conf"
+
+    zdbname: "DBName=zabbix"
+
+    zdbuser: "DBUser=zabbix"
+
+    zdbpassword: "DBPassword=zabbix"
+
+    zdbhost: "DBHost=localhost"
