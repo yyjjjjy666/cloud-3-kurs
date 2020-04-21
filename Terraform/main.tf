@@ -1,15 +1,15 @@
 provider "google" {
-  credentials = "${file("var.credentials")}"
+  credentials = "${file("${var.credentials}")}"
   project = "${var.project}"
   region = "${var.region}"
   zone = "${var.zone}"
 }
 
-resource "resgroup" "virtualmachine" {
+resource "google_compute_instance" "vm_instance" {
   name = "${var.rgname}"
-  machine-type= "${var.mtype}"
+  machine_type = "${var.mtype}"
 
-  boot disc {
+  boot_disk {
     initialize_params {
       image = "${var.image}"
     }
