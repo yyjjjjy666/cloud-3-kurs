@@ -1,0 +1,26 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: geller
+  namespace: homework
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: auf
+          image: fadeboy879/daniel:auf
+          imagePullPolicy: Always
+          ports:
+            - name: port
+              containerPort: 80
+              protocol: TCP
+      imagePullSecrets:
+        - name: daniel
