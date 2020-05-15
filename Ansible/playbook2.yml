@@ -2,7 +2,6 @@
 - name: Install packages
   hosts: all
   become: true
-  no_log: false
   roles:
-    - role: master
+    - role: slave
 

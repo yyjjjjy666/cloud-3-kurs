@@ -1,0 +1,104 @@
+---
+  - name: Create file for PostgreSQL 9.6 repository
+    file: 
+        path: /etc/apt/sources.list.d/postgresql.list
+        state: touch
+
+  - name: Add repo to created file
+    lineinfile:
+        path: /etc/apt/sources.list.d/postgresql.list
+        line: 'deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main'
+
+  - name: Import key to the system
+    apt_key: 
+        url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+        state: present
+
+  - name: Apt Update
+    apt:
+        update_cache: yes
+
+  - name: Install PostgreSQL and ufw
+    apt:
+        name: "{{ item }}" 
+        update_cache: yes
+        state: latest
+    with_items: "{{ packages }}"
+
+  - name: Stop PostgreSQL service
+    service: 
+      name: postgresql
+      state: stopped
+
+  - name: Start PostgreSQL service
+    service:
+      name: postgresql
+      state: started
+      enabled: yes
+
+#  - name: Connect to psql with user postgres and create DB with name exam
+#    become: true
+#    become_user: postgres
+#    postgresql_db:
+#      name: exam
+#      login_user: postgres
+#      login_password: Passw0rd
+
+#  - name: Connect to DB
+#    become: true
+#    become_user: postgres
+#    postgresql_user:
+#      db: exam
+#      name: postgres
+#      password: Passw0rd
+#      priv: "ALL"
+
+  - name: Allow SSH
+    ufw: 
+      default: allow
+      name: /etc/init.d/ssh
+ 
+  - name: Allow PotgreSQL
+    ufw: 
+      default: allow
+      name: /etc/init.d/ssh
+
+  - name: Stop PostgreSQL
+    service:
+      name: postgresql
+      state: stopped
+
+  - name: Configure SLAVE Server postgresql conf file
+    lineinfile: 
+      path: /etc/postgresql/9.6/main/postgresql.conf
+      line: "listen_adresses = '192.168.1.157'\nwal_level = hot_standby\nsynchronous_commit = local\nmax_wal_senders = 2\nwal_keep_segments = 10\nsynchronous_standby_names = 'pgslave001'\nhot_standby = on"
+    
+  - name: create backup
+    become: true
+    become_user: postgres
+    command: mv /9.6/main /9.6/main-backup
+
+  - name: new main dir and chmod 600
+    file: 
+      state: directory
+      path: /9.6/main/
+      mode: '0700'
+ 
+  - name: copy directory from MASTER to SLAVE
+    command: pg_basebackup -h 192.168.1.165 -U replica -D /var/lib/postgresql/9.6/main -P --xlog
+
+  - name: Touch recovery file
+    file: 
+      path: /var/lib/postgresql/9.6/main/recovery.conf
+      state: touch
+      mode: '0600'
+
+  - name: Adding content to the recovery file
+    lineinfile:
+      path: /var/lib/postgresql/9.6/main/recovery.conf
+      line: "standby_mode = 'on'\nprimary_conninfo = 'host=192.168.1.165 port=5432 user=replica password=Passw0rd application_name=pgslave001'\nrestore_command = 'cp /var/lib/postgresql/9.6/main/archive/%f %p'\ntrigger_file = '/tmp/postgresql.trigger.5432'"
+
+  - name: start PostgreSQL
+    service: 
+      name: postgresql
+      state: started

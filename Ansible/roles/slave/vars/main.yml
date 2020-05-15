@@ -1,0 +1,9 @@
+---
+    packages:
+        - postgresql-9.6
+        - postgresql-contrib-9.6
+        - ufw
+    
+    services:
+        - ssh
+        - postgresql
